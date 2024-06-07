@@ -1,14 +1,12 @@
-# Use uma imagem base do JDK 17
+# Etapa 1: Build
+FROM gradle:7.4.2-jdk17 AS builder
+WORKDIR /home/gradle/project
+COPY . .
+RUN gradle clean build --no-daemon
+
+# Etapa 2: Run
 FROM openjdk:17-jdk-slim
-
-# Define o diretório de trabalho dentro do container
 WORKDIR /app
-
-# Copia o arquivo JAR gerado para dentro do container
-COPY build/libs/ProspOcean-0.0.1-SNAPSHOT.jar app.jar
-
-# Exponha a porta que a aplicação Spring Boot está configurada para escutar
+COPY --from=builder /home/gradle/project/build/libs/ProspOcean-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-
-# Define o comando para executar a aplicação quando o container iniciar
 ENTRYPOINT ["java", "-jar", "app.jar"]
