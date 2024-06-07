@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  prospocean:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
+      - SPRING_DATASOURCE_USERNAME=rm552525
+      - SPRING_DATASOURCE_PASSWORD=120505
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=oracle.jdbc.OracleDriver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.OracleDialect
+      - SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT=20000
+      - SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE=10
+      - SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE=5
+      - SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT=300000
+      - SPRING_DATASOURCE_HIKARI_MAX_LIFETIME=600000
+      - LOGGING_LEVEL_ORG_HIBERNATE_SQL=DEBUG
+      - LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL_BASIC_BINDER=TRACE
+      - SPRING_HATEOAS_USE_HAL_AS_DEFAULT_JSON_MEDIA_TYPE=true
+      - SERVER_PORT=8080
+      - SPRINGDOC_API_DOCS_PATH=/v3/api-docs
+      - SPRINGDOC_SWAGGER_UI_PATH=/swagger-ui.html
+    depends_on:
+      - db
+
+  db:
+    image: oracleinanutshell/oracle-xe-11g
+    ports:
+      - "1521:1521"
+    environment:
+      - ORACLE_ALLOW_REMOTE=true
+      - ORACLE_DISABLE_ASYNCH_IO=true
+
+volumes:
+  oracle-data:
